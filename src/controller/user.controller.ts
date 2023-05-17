@@ -1,6 +1,6 @@
 import { Context } from 'koa';
 import { User } from '@prisma/client';
-import UserService from '../services/user.service';
+import UserService from '../service/user.service';
 
 import jwt from 'jsonwebtoken';
 const secretKey = 'your-secret-key'; // Secret key for JWT
@@ -17,12 +17,16 @@ class UserController {
     }
     async getUserById(ctx: Context): Promise<void>{
         const id = Number(ctx.params.id);
-        const user = await this.userService.getUserById(id);
-        if(user){
-          ctx.body = user;
-        }else{
+        try{
+          const user = await this.userService.getUserById(id);
+          if(user){
+            ctx.body = user;
+          }else{
             ctx.status = 404;
             ctx.body = {error: 'User not found'}
+        }
+        }catch(err){
+          ctx.body = {error: 'Invalid request parameter'}
         }
     }
     async  createUser(ctx: Context): Promise<void> {
@@ -57,23 +61,27 @@ class UserController {
         const deleteUser = await this.userService.deleteUser(id)
         if(deleteUser){
           ctx.body = deleteUser;
-      }
+        }
       }catch(err){
-        ctx.status = 404;
         ctx.body = {error: 'User not found'};
       }
     }
 
     async updateUser(ctx: Context): Promise<void> {
-      const id = Number(ctx.params.id);
-      const data = ctx.request.body as Partial<User>;
-      const updatedUser = await this.userService.updateUser(id, data);
-      if (updatedUser) {
-        ctx.body = updatedUser;
-      } else {
-        ctx.status = 404;
-        ctx.body = { error: 'User not found' };
+      try{
+        const id = Number(ctx.params.id);
+        const data = ctx.request.body as Partial<User>;
+        const updatedUser = await this.userService.updateUser(id, data);
+        if (updatedUser) {
+          ctx.body = updatedUser;
+        } else {
+          ctx.status = 404;
+          ctx.body = { error: 'User not found' };
+        }
+      }catch(err){
+        ctx.body = {error: 'Invalid request parameters'}
       }
+      
     }
 
     async login(ctx: Context): Promise<void>{

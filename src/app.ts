@@ -1,6 +1,6 @@
 import Koa, { Context } from 'koa';
 import bodyParser from 'koa-bodyparser';
-import userRouter from './routes/user.router';
+import userRouter from './route/user.router';
 
 const app = new Koa();
 // Middleware
