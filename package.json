@@ -22,5 +22,9 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "local": "npx ts-node \"../koa-prisma-ts/src/app.ts\""
   }
 }
