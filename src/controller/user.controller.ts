@@ -85,11 +85,11 @@ class UserController {
     }
 
     async login(ctx: Context): Promise<void>{
-      const {login, password} = ctx.request.body as {
-        login: string;
+      const {username, password} = ctx.request.body as {
+        username: string;
         password: string;
       };
-      const user = await this.userService.login(login,password);
+      const user = await this.userService.login(username,password);
       if(user){
         const token = jwt.sign({ user }, secretKey, { expiresIn: '1h' });
         ctx.body = { token };

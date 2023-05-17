@@ -8,8 +8,8 @@ class UserRepository{
     async findById(id: number): Promise<User | null>{
         return prisma.user.findUnique({where:{id}})
     }
-    async create(login:string,name: string,lastName: string,password: string, gmail: string): Promise<User> {
-        return prisma.user.create({data:{ login,name,lastName,password,gmail }});
+    async create(username:string,name: string,lastName: string,password: string, gmail: string): Promise<User> {
+        return prisma.user.create({data:{ username,name,lastName,password,gmail }});
     }
     async delete(id: number): Promise<User | null>{
         return prisma.user.delete({where:{id}});
@@ -17,9 +17,9 @@ class UserRepository{
     async update(id: number, data: Partial<User>): Promise<User | null> {
         return prisma.user.update({ where: { id }, data });
     }
-    async login(login:string): Promise<User | null>{
+    async login(username:string): Promise<User | null>{
         return prisma.user.findUnique({where:{
-            login : login
+            username : username
         }})
     }
 }

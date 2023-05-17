@@ -29,8 +29,8 @@ class UserService{
     async updateUser(id: number, data: Partial<User>): Promise<User | null> {
         return this.userRepository.update(id, data);
     }
-    async login(login:string, password: string): Promise<User | null>{
-        const user = await this.userRepository.login(login);
+    async login(username:string, password: string): Promise<User | null>{
+        const user = await this.userRepository.login(username);
         if(user){
             const hashedPassword = await this.hash(password);
             if(hashedPassword === user.password){
