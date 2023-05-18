@@ -30,8 +30,8 @@ class UserController {
         }
     }
     async  createUser(ctx: Context): Promise<void> {
-        const { login, name, lastName, password, gmail } = ctx.request.body as {
-            login: string;
+        const { username, name, lastName, password, gmail } = ctx.request.body as {
+            username: string;
             password: string;
             gmail: string;
             name: string;
@@ -39,7 +39,7 @@ class UserController {
           };
       
         try {
-          const user:User = await this.userService.createUser(login, name, lastName, password, gmail);
+          const user:User = await this.userService.createUser(username, name, lastName, password, gmail);
           ctx.status = 201;
           ctx.body = user;
         } catch (error) {
