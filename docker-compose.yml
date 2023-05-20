@@ -2,13 +2,13 @@ version: '3'
 services:
   postgres:
     image: postgres:15.3
-    restart: always
+    # restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB = db_user
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - ./.db:/var/lib/postgresql/data
     ports:
       - '5432:5432'
 volumes:
