@@ -3,12 +3,10 @@ Cтворити файл .env і добавити DATABASE_URL="postgresql://USE
 
 Команди для запуску:
 
-npm i --save-dev @types/koa
+1. npm install
 
-docker-compose up -d
+2. docker-compose up -d
 
+3. npx prisma migrate dev --name init
 
-
-npx prisma migrate dev --name init
-
-npm run local
+4. npm run local
