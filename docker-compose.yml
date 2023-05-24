@@ -1,47 +1,13 @@
-version: '3'
+version: '3.8'
 services:
   postgres:
     image: postgres:15.3
     # restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB = db_user
+      POSTGRES_PASSWORD : postgres
+      POSTGRES_USER : postgres
+      POSTGRES_DB : db_user
     volumes:
       - ./.db:/var/lib/postgresql/data
     ports:
       - '5432:5432'
-volumes:
-  postgres:
-
-
-# version: '3'
-# services:
-#   prisma:
-#     image: prismagraphql/prisma:1.34
-#     restart: always
-#     ports:
-#       - '4466:4466'
-#     environment:
-#       PRISMA_CONFIG: |
-#         managementApiSecret: secret23
-#         port: 4466
-#         databases:
-#           default:
-#             connector: postgres
-#             host: postgres
-#             port: 5432
-#             user: postgres
-#             password: root
-#             connectionLimit: 5
-#   postgres:
-#     image: postgres
-#     restart: always
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: root
-#     volumes:
-#       - postgres:/var/lib/postgresql/data
-# volumes:
-#   postgres:          
-
