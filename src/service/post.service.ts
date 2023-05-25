@@ -19,7 +19,10 @@ class PostService{
     async getByTitle(title: string): Promise<Post[]>{
         return this.postService.findPostsByTitle(title);
     }
-    async update(id: number, data: Partial<Post>): Promise<Post | null>{
+    async update(
+        id: number,
+        data: Partial<Post>
+        ): Promise<Post | null>{
         return this.postService.update(id,data);
     }
     async deteleById(id: number): Promise<Post | null>{

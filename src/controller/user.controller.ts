@@ -50,13 +50,6 @@ class UserController {
     
     async deleteUser(ctx: Context):Promise<void>{
       const id: number = Number(ctx.params.id);
-      // const deleteUser = await this.userService.deleteUser(id)
-      // if(deleteUser){
-      //   ctx.body = deleteUser;
-      // }else{
-      //   ctx.status = 404;
-      //   ctx.body = {error: 'User not found'};
-      // }
       try{
         const deleteUser = await this.userService.deleteUser(id)
         if(deleteUser){
@@ -107,11 +100,6 @@ class UserController {
           lastName: string;
           posts: Post[]
         };
-        // const postData = posts
-        // ? posts.map((post: Prisma.PostCreateInput) => {
-        //   return { title: post.title, content: post.content || undefined }
-        // })
-        // : []
     
       try {
         const user:User = await this.userService.signup(username, name, lastName, password, gmail,posts);

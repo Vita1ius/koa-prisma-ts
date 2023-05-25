@@ -7,28 +7,31 @@ class PostRepository{
     }
     async findByIdUser(id: number):Promise<Post[]>{
         return prisma.post.findMany({
-            where:{
+            where: {
                 authorId : id
             }
         });
     }
     async findPostById(id: number):Promise<Post | null>{
         return prisma.post.findUnique({
-            where:{
+            where: {
                 id: id
             }
         });
     }
     async findPostsByTitle(title: string):Promise<Post[]>{
         return prisma.post.findMany({
-            where:{
+            where: {
               title: title
             }
           });
     }
-    async update(id: number,data: Partial<Post>): Promise<Post | null>{
+    async update(
+        id: number,
+        data: Partial<Post>
+        ): Promise<Post | null>{
         return prisma.post.update({
-            where:{
+            where: {
                 id: id
             },
             data

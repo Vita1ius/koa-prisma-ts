@@ -19,17 +19,34 @@ class UserService{
         return this.userRepository.findById(id);
     }
     
-    async createUser(login:string,name: string,lastName: string,password: string, gmail: string): Promise<User>{
+    async createUser(
+        login:string,
+        name: string,
+        lastName: string,
+        password: string,
+        gmail: string
+        ): Promise<User>{
         const hashedPassword: string = await this.hash(password);
-        return this.userRepository.create(login,name,lastName,hashedPassword,gmail);
+        return this.userRepository.create(
+            login,
+            name,
+            lastName,
+            hashedPassword,
+            gmail);
     }
     async deleteUser(id: number):Promise<User | null>{
         return this.userRepository.delete(id)
     }
-    async updateUser(id: number, data: Partial<User>): Promise<User | null> {
+    async updateUser(
+        id: number,
+        data: Partial<User>
+        ): Promise<User | null> {
         return this.userRepository.update(id, data);
     }
-    async login(username:string, password: string): Promise<User | null>{
+    async login(
+        username:string,
+        password: string
+        ): Promise<User | null>{
         const user = await this.userRepository.login(username);
         if(user){
             const hashedPassword = await this.hash(password);
@@ -62,11 +79,23 @@ class UserService{
         })
         : []
         const hashedPassword: string = await this.hash(password);
-        return this.userRepository.signup(username,name,lastName,hashedPassword,gmail,postData)
+        return this.userRepository.signup(
+            username,
+            name,
+            lastName,
+            hashedPassword,
+            gmail,
+            postData);
     }
 
-    async createPost(title: string, content: string, authorId: number): Promise<Post> {
-        return this.userRepository.createPost(title, content, authorId);
+    async createPost(title: string,
+        content: string,
+        authorId: number
+        ): Promise<Post> {
+        return this.userRepository.createPost(
+            title,
+            content,
+            authorId);
       }
 }
 export default UserService;
