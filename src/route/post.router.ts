@@ -11,5 +11,6 @@ router.get('/postByTitle', postController.getPostByTitle.bind(postController));
 router.get('/postByAuthorId/:authorId', postController.getByAuthorId.bind(postController));
 router.delete('/post/:id', postController.deletePost.bind(postController))
 router.put('/post/:id', postController.updatePost.bind(postController));
+router.put('/post/:id/views', postController.view.bind(postController));
 
 export default router;

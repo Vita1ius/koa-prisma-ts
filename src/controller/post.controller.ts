@@ -79,7 +79,19 @@ class PostController{
           ctx.body = {error: 'Invalid request parameters'}
         }
         
-      }
+    }
+    async view(ctx: Context): Promise<void>{
+        const id = Number(ctx.params.id)
+
+        try {
+            const post = await this.postService.view(id);
+
+            ctx.body = post
+        } catch {
+            ctx.status = 404
+            ctx.body = { error: 'Post not found' }
+        }
+    }
 
 
 }

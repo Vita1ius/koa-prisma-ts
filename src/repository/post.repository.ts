@@ -41,6 +41,18 @@ class PostRepository{
             }
         });
     }
+    async view(id: number): Promise<Post | null>{
+        return prisma.post.update({
+            where: {
+              id,
+            },
+            data: {
+              viewCount: {
+                increment: 1,
+              },
+            },
+          });
+    }
 
 }
 

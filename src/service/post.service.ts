@@ -25,6 +25,9 @@ class PostService{
     async deteleById(id: number): Promise<Post | null>{
         return this.postService.delete(id);
     }
+    async view(id:number):Promise<Post | null>{
+        return this.postService.view(id);
+    }
 
 }
 export default PostService;
