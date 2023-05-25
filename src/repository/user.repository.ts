@@ -1,4 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient, User, Post, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
 class UserRepository{
@@ -22,6 +22,27 @@ class UserRepository{
             username : username
         }})
     }
+    async signup(
+        username:string,
+        name: string,
+        lastName: string,
+        password: string,
+        gmail: string,
+        posts: Prisma.PostCreateInput[]
+    ): Promise<User>{
+        return await prisma.user.create({
+          data: {
+            username,
+            name,
+            lastName,
+            password,
+            gmail,
+            posts: {
+              create: posts,
+            },
+          },
+        });
+    }    
 }
 
 export default UserRepository;

@@ -1,5 +1,5 @@
 import { Context } from 'koa';
-import { User } from '@prisma/client';
+import { User, Post,Prisma } from '@prisma/client';
 import UserService from '../service/user.service';
 
 import jwt from 'jsonwebtoken';
@@ -96,6 +96,30 @@ class UserController {
       }else{
         ctx.status = 404;
         ctx.body = {error: 'Wrong login or password'}
+      }
+    }
+    async  signup(ctx: Context): Promise<void> {
+      const { username, name, lastName, password, gmail, posts } = ctx.request.body as {
+          username: string;
+          password: string;
+          gmail: string;
+          name: string;
+          lastName: string;
+          posts: Post[]
+        };
+        // const postData = posts
+        // ? posts.map((post: Prisma.PostCreateInput) => {
+        //   return { title: post.title, content: post.content || undefined }
+        // })
+        // : []
+    
+      try {
+        const user:User = await this.userService.signup(username, name, lastName, password, gmail,posts);
+        ctx.status = 201;
+        ctx.body = user;
+      } catch (error) {
+        ctx.status = 500;
+        ctx.body = { error: 'Internal server error' };
       }
     }
 }

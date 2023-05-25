@@ -1,5 +1,5 @@
 import UserRepository from '../repository/user.repository';
-import { User } from '@prisma/client';
+import { User, Post,Prisma } from '@prisma/client';
 import { createHash } from 'crypto';
 // const {createHash} = require('crypto')
 
@@ -47,6 +47,21 @@ class UserService{
     async hash(password:string) : Promise<string>{
         const passwordHash = createHash('sha256').update(password).digest('hex');
         return passwordHash;
+    }
+    async signup(
+        username:string,
+        name: string,
+        lastName: string,
+        password: string, 
+        gmail: string,
+        posts: Prisma.PostCreateInput[]
+    ):Promise<User>{
+        const postData = posts
+        ? posts.map((post: Prisma.PostCreateInput) => {
+          return { title: post.title, content: post.content || undefined }
+        })
+        : []
+        return this.userRepository.signup(username,name,lastName,password,gmail,postData)
     }
 }
 export default UserService;
