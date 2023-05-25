@@ -39,6 +39,20 @@ class PostController{
           ctx.body = {error: 'Invalid request parameter'}
         }
     }
+    async getPostByTitle(ctx: Context): Promise<void>{
+        const { title } = ctx.request.body as { title: string };
+        try{
+          const post = await this.postService.getByTitle(title);
+          if(post){
+            ctx.body = post;
+          }else{
+            ctx.status = 404;
+            ctx.body = {error: 'Post not found'}
+        }
+        }catch(err){
+          ctx.body = {error: 'Invalid request parameter'}
+        }
+    }
     async deletePost(ctx: Context):Promise<void>{
         const id: number = Number(ctx.params.id);
         try{

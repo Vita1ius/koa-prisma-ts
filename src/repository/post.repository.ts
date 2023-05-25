@@ -10,21 +10,21 @@ class PostRepository{
             where:{
                 authorId : id
             }
-        })
+        });
     }
     async findPostById(id: number):Promise<Post | null>{
         return prisma.post.findUnique({
             where:{
                 id: id
             }
-        })
+        });
     }
     async findPostsByTitle(title: string):Promise<Post[]>{
         return prisma.post.findMany({
             where:{
-                title: title
+              title: title
             }
-        })
+          });
     }
     async update(id: number,data: Partial<Post>): Promise<Post | null>{
         return prisma.post.update({
@@ -32,14 +32,14 @@ class PostRepository{
                 id: id
             },
             data
-        })
+        });
     }
     async delete(id: number): Promise<Post | null>{
         return prisma.post.delete({
             where:{
                 id:id
             }
-        })
+        });
     }
 
 }
