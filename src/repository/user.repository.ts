@@ -8,7 +8,13 @@ class UserRepository{
     async findById(id: number): Promise<User | null>{
         return prisma.user.findUnique({where:{id}})
     }
-    async create(username:string,name: string,lastName: string,password: string, gmail: string): Promise<User> {
+    async create(
+        username:string,
+        name: string,
+        lastName: string,
+        password: string,
+        gmail: string
+        ): Promise<User> {
         return prisma.user.create({data:{ username,name,lastName,password,gmail }});
     }
     async delete(id: number): Promise<User | null>{
@@ -42,7 +48,20 @@ class UserRepository{
             },
           },
         });
-    }    
+    }   
+    async createPost(title: string, content: string, authorId: number): Promise<Post> {
+        return prisma.post.create({
+          data: {
+            title,
+            content,
+            author: {
+              connect: {
+                id: authorId,
+              },
+            },
+          },
+        });
+      } 
 }
 
 export default UserRepository;

@@ -61,7 +61,12 @@ class UserService{
           return { title: post.title, content: post.content || undefined }
         })
         : []
-        return this.userRepository.signup(username,name,lastName,password,gmail,postData)
+        const hashedPassword: string = await this.hash(password);
+        return this.userRepository.signup(username,name,lastName,hashedPassword,gmail,postData)
     }
+
+    async createPost(title: string, content: string, authorId: number): Promise<Post> {
+        return this.userRepository.createPost(title, content, authorId);
+      }
 }
 export default UserService;

@@ -43,15 +43,15 @@ class PostRepository{
     }
     async view(id: number): Promise<Post | null>{
         return prisma.post.update({
-            where: {
-              id,
+        where: {
+            id,
+        },
+        data: {
+            viewCount: {
+            increment: 1,
             },
-            data: {
-              viewCount: {
-                increment: 1,
-              },
-            },
-          });
+        }
+    });
     }
 
 }
