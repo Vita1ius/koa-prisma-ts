@@ -88,6 +88,16 @@ class UserRepository{
           },
         });
     } 
+    async getUserPostCount(){
+      return await prisma.user.findMany({
+        select: {
+          username: true,
+          _count: {
+            select: { posts: true },
+          },
+        },
+      })
+    }
 }
 
 export default UserRepository;

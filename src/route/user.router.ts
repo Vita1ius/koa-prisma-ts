@@ -14,4 +14,6 @@ router.put('/user/:id', userController.updateUser.bind(userController));
 router.post('/user/login', userController.login.bind(userController));
 router.post('/createPost',authenticated , userController.createPost.bind(userController));
 
+router.get('/users/posts', userController.getUserPostCount.bind(userController));
+
 export default router;

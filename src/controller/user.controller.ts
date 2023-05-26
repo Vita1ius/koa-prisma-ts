@@ -126,5 +126,10 @@ class UserController {
         ctx.body = { error: 'Invalid token' };
       }
     }
+
+    async getUserPostCount(ctx: Context): Promise<void>{
+      const users = await this.userService.getUserPostCount();
+      ctx.body = users;
+    }
 }
 export default UserController;

@@ -96,6 +96,9 @@ class UserService{
             title,
             content,
             authorId);
-      }
+    }
+    async getUserPostCount(){
+        return this.userRepository.getUserPostCount();
+    }
 }
 export default UserService;
