@@ -31,5 +31,14 @@ class PostService{
   async view(id:number):Promise<Post | null>{
     return this.postService.view(id);
   }
+  async createPost(title: string,
+    content: string,
+    authorId: number
+  ): Promise<Post> {
+    return this.postService.createPost(
+      title,
+      content,
+      authorId);
+  }
 }
 export default PostService;

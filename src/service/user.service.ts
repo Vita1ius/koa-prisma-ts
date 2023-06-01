@@ -86,16 +86,6 @@ class UserService{
       gmail,
       postData);
   }
-
-  async createPost(title: string,
-    content: string,
-    authorId: number
-  ): Promise<Post> {
-    return this.userRepository.createPost(
-      title,
-      content,
-      authorId);
-  }
   async getUserPostCount(){
     return this.userRepository.getUserPostCount();
   }

@@ -111,23 +111,6 @@ class UserController {
       ctx.body = { error: 'Internal server error' };
     }
   }
-
-  async createPost(ctx: Context) {
-    const { title, content } = ctx.request.body as { title: string, content: string };
-    const token = ctx.request.headers.authorization!.split(' ')[1];
-    try {
-      const decodedToken = jwt.verify(token, secretKey) as { user: { id: number } };
-      const authorId = decodedToken.user.id;
-  
-      const createdPost = await this.userService.createPost(title, content, authorId);
-      ctx.status = 201;
-      ctx.body = createdPost;
-    } catch (error) {
-      ctx.status = 500;
-      ctx.body = { error: 'Invalid token' };
-    }
-  }
-
   async getUserPostCount(ctx: Context): Promise<void>{
     const users = await this.userService.getUserPostCount();
     ctx.body = users;

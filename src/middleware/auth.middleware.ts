@@ -24,7 +24,7 @@ export async function authenticated(ctx: Context, next: () => Promise<any>) {
 
     const token = authHeader.split(' ')[1];
     const decoded = await authenticateToken(token);
-    ctx.state.userId = decoded.userId;
+    ctx.state.user = decoded.user;
 
     await next();
   } catch (err) {

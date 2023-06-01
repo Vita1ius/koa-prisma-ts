@@ -12,5 +12,6 @@ router.get('/postByAuthorId/:authorId', postController.getByAuthorId.bind(postCo
 router.delete('/post/:id', postController.deletePost.bind(postController))
 router.put('/post/:id', postController.updatePost.bind(postController));
 router.put('/post/:id/views', postController.view.bind(postController));
+router.post('/createPost',authenticated , postController.createPost.bind(postController));
 
 export default router;

@@ -74,20 +74,7 @@ class UserRepository{
       },
     },
     });
-  }   
-  async createPost(title: string, content: string, authorId: number): Promise<Post> {
-    return prisma.post.create({
-      data: {
-        title,
-        content,
-        author: {
-          connect: {
-            id: authorId,
-          },
-        },
-      },
-    });
-  } 
+  }
   async getUserPostCount(){
     return await prisma.user.findMany({
       select: {

@@ -54,8 +54,21 @@ class PostRepository{
       increment: 1,
       },
     }
-  });
+    });
   }
+  async createPost(title: string, content: string, authorId: number): Promise<Post> {
+    return prisma.post.create({
+      data: {
+        title,
+        content,
+        author: {
+          connect: {
+            id: authorId,
+          },
+        },
+      },
+    });
+  } 
 }
 
 

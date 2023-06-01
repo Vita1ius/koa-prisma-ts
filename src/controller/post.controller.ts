@@ -2,6 +2,9 @@ import { Context } from 'koa';
 import { Post } from '@prisma/client';
 import PostService from '../service/post.service';
 
+import jwt from 'jsonwebtoken';
+const secretKey = 'your-secret-key'; // Secret key for JWT
+
 class PostController{
   private postService: PostService;
   constructor(){
@@ -89,6 +92,21 @@ class PostController{
     } catch {
       ctx.status = 404
       ctx.body = { error: 'Post not found' }
+    }
+  }
+  async createPost(ctx: Context) {
+    const { title, content } = ctx.request.body as { title: string, content: string };
+    const token = ctx.request.headers.authorization!.split(' ')[1];
+    try {
+      const decodedToken = jwt.verify(token, secretKey) as { user: { id: number } };
+      const authorId = decodedToken.user.id;
+  
+      const createdPost = await this.postService.createPost(title, content, authorId);
+      ctx.status = 201;
+      ctx.body = createdPost;
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { error: 'Invalid token' };
     }
   }
 }
