@@ -7,46 +7,47 @@ const secretKey = 'your-secret-key'; // Secret key for JWT
 
 class UserController {
   private userService : UserService;
+
   constructor(){
-      this.userService  = new UserService();
+    this.userService  = new UserService();
   }
 
   async getAllUsers(ctx: Context): Promise<void> {
-      const users = await this.userService.getAllUsers();
-      ctx.body = users;
+    const users = await this.userService.getAllUsers();
+    ctx.body = users;
   }
   async getUserById(ctx: Context): Promise<void>{
-      const id = Number(ctx.params.id);
-      try{
-        const user = await this.userService.getUserById(id);
-        if(user){
-          ctx.body = user;
-        }else{
-          ctx.status = 404;
-          ctx.body = {error: 'User not found'}
-      }
-      }catch(err){
-        ctx.body = {error: 'Invalid request parameter'}
-      }
+    const id = Number(ctx.params.id);
+    try{
+      const user = await this.userService.getUserById(id);
+      if(user){
+        ctx.body = user;
+      }else{
+        ctx.status = 404;
+        ctx.body = {error: 'User not found'}
+    }
+    }catch(err){
+      ctx.body = {error: 'Invalid request parameter'}
+    }
   }
   async  createUser(ctx: Context): Promise<void> {
-      const { username, name, lastName, password, gmail } = ctx.request.body as {
-          username: string;
-          password: string;
-          gmail: string;
-          name: string;
-          lastName: string;
-        };
-    
-      try {
-        const user:User = await this.userService.createUser(username, name, lastName, password, gmail);
-        ctx.status = 201;
-        ctx.body = user;
-      } catch (error) {
-        ctx.status = 500;
-        ctx.body = { error: 'Internal server error' };
-      }
+    const { username, name, lastName, password, gmail } = ctx.request.body as {
+      username: string;
+      password: string;
+      gmail: string;
+      name: string;
+      lastName: string;
+    };
+  
+    try {
+      const user:User = await this.userService.createUser(username, name, lastName, password, gmail);
+      ctx.status = 201;
+      ctx.body = user;
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { error: 'Internal server error' };
     }
+  }
   
   async deleteUser(ctx: Context):Promise<void>{
     const id: number = Number(ctx.params.id);
@@ -93,13 +94,13 @@ class UserController {
   }
   async  signup(ctx: Context): Promise<void> {
     const { username, name, lastName, password, gmail, posts } = ctx.request.body as {
-        username: string;
-        password: string;
-        gmail: string;
-        name: string;
-        lastName: string;
-        posts: Post[]
-      };
+      username: string;
+      password: string;
+      gmail: string;
+      name: string;
+      lastName: string;
+      posts: Post[]
+    };
   
     try {
       const user:User = await this.userService.signup(username, name, lastName, password, gmail,posts);
