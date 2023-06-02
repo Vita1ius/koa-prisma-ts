@@ -6,13 +6,13 @@ const router = new Router();
 const userController = new UserController();
 
 router.get('/users',authenticated , userController.getAllUsers.bind(userController));
-router.get('/user/:id', userController.getUserById.bind(userController));
-router.post('/users', userController.createUser.bind(userController));
-router.post('/signup', userController.signup.bind(userController));
-router.delete('/user/:id', userController.deleteUser.bind(userController));
-router.put('/user/:id', userController.updateUser.bind(userController));
+router.get('/user/:id',authenticated, userController.getUserById.bind(userController));
+router.post('/users',authenticated, userController.createUser.bind(userController));
+router.post('/signup',authenticated, userController.signup.bind(userController));
+router.delete('/user/:id',authenticated, userController.deleteUser.bind(userController));
+router.put('/user/:id',authenticated, userController.updateUser.bind(userController));
 router.post('/user/login', userController.login.bind(userController));
 
-router.get('/users/posts', userController.getUserPostCount.bind(userController));
+router.get('/users/posts',authenticated, userController.getUserPostCount.bind(userController));
 
 export default router;
