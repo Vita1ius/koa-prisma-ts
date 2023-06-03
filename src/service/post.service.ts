@@ -2,40 +2,40 @@ import PostRepository from "../repository/post.repository";
 import {Post} from "@prisma/client"
 
 class PostService{
-  private postService: PostRepository;
+  private postRepository: PostRepository;
   
   constructor(){
-    this.postService = new PostRepository();
+    this.postRepository = new PostRepository();
   }
   async getAllPost(): Promise<Post[]>{
-    return this.postService.findAll();
+    return this.postRepository.findAll();
   }
   async getByIdUser(id: number): Promise<Post[]>{
-    return this.postService.findByIdUser(id);
+    return this.postRepository.findByIdUser(id);
   }
   async getByid(id:number): Promise<Post | null>{
-    return this.postService.findPostById(id);
+    return this.postRepository.findPostById(id);
   }
   async getByTitle(title: string): Promise<Post[]>{
-    return this.postService.findPostsByTitle(title);
+    return this.postRepository.findPostsByTitle(title);
   }
   async update(
     id: number,
     data: Partial<Post>
   ): Promise<Post | null>{
-    return this.postService.update(id,data);
+    return this.postRepository.update(id,data);
   }
   async deteleById(id: number): Promise<Post | null>{
-    return this.postService.delete(id);
+    return this.postRepository.delete(id);
   }
   async view(id:number):Promise<Post | null>{
-    return this.postService.view(id);
+    return this.postRepository.view(id);
   }
   async createPost(title: string,
     content: string,
     authorId: number
   ): Promise<Post> {
-    return this.postService.createPost(
+    return this.postRepository.createPost(
       title,
       content,
       authorId);
