@@ -7,7 +7,7 @@ const userController = new UserController();
 
 router.get('/users',authenticated , userController.getAllUsers.bind(userController));
 router.get('/user/:id',authenticated, userController.getUserById.bind(userController));
-router.post('/users', userController.createUser.bind(userController));
+router.post('/user', userController.createUser.bind(userController));
 router.post('/signup',authenticated, userController.signup.bind(userController));
 router.delete('/user/:id',authenticated, userController.deleteUser.bind(userController));
 router.put('/user/:id',authenticated, userController.updateUser.bind(userController));

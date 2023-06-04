@@ -2,7 +2,8 @@ import { Context } from 'koa';
 import { PostAttachment } from '@prisma/client';
 import PostAttachmentService from '../service/postAttachment.service';
 import { s3Uploadv3 } from '../../s3.service';
-import { integer } from 'aws-sdk/clients/cloudfront';
+import jwt from 'jsonwebtoken';
+const secretKey = 'your-secret-key'; // Secret key for JWT
 
 
 class PostAttachmentController{
@@ -13,18 +14,21 @@ class PostAttachmentController{
   async upload(ctx:any): Promise<void>{
     //const { userId, postId } = ctx.request.body as { userId: number, postId: number };
     const formData = ctx.request.body;
-    const userId = Number(formData.userId);
     const postId = Number(formData.postId);
-
+    const token = ctx.request.headers.authorization!.split(' ')[1];
 
     try {
-      const results = await s3Uploadv3(ctx.request.files,userId,postId);
-       results.map(url => this.postAttachmentService.add(url,postId))
-      // const postAttachments = await this.postAttachmentService.add(results[0],postId)
-      //  console.log(postAttachments);
-      
-      ctx.body = { status: 'success' };
-      //ctx.body = postAttachments;
+      const decodedToken = jwt.verify(token, secretKey) as { user: { id: number } };
+      const userId = decodedToken.user.id;
+      if(ctx.request.files && ctx.request.files.length > 0){
+        const results = await s3Uploadv3(ctx.request.files,userId,postId);
+        results.map(url => this.postAttachmentService.add(url,postId))
+
+        ctx.status = 201;
+        ctx.body = { status: 'uploaded' };
+      }else{
+        ctx.body = { status: 'file is empty' };
+      }
     } catch (err) {
       ctx.status = 404
       ctx.body = err

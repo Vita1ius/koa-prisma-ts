@@ -29,6 +29,6 @@ const upload = multer({
 // const upload = multer({ storage: storage })
 
 
-router.post('/upload',upload.array("file"), postAttachmentController.upload.bind(postAttachmentController));
+router.post('/upload',authenticated,upload.array("file"), postAttachmentController.upload.bind(postAttachmentController));
 
 export default router;
