@@ -1,7 +1,7 @@
 import { Context } from 'koa';
 import { PostAttachment } from '@prisma/client';
 import PostAttachmentService from '../service/postAttachment.service';
-import { s3Uploadv3 } from '../../s3.service';
+import { s3Uploadv3,getObjectSignedUrl } from '../../s3.service';
 import jwt from 'jsonwebtoken';
 const secretKey = 'your-secret-key'; // Secret key for JWT
 
@@ -33,6 +33,14 @@ class PostAttachmentController{
       ctx.status = 404
       ctx.body = err
     }
+  }
+  async getImages(ctx:Context):Promise<void>{
+    const postId = Number(ctx.params.postId);
+    const posts = await this.postAttachmentService.getByIPostId(postId)
+    for (let post of posts) {
+      post.url = await getObjectSignedUrl(post.url)
+    }
+    ctx.body = posts;
   }
 }
 export default PostAttachmentController;

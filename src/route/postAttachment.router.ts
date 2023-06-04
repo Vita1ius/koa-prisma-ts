@@ -30,5 +30,6 @@ const upload = multer({
 
 
 router.post('/upload',authenticated,upload.array("file"), postAttachmentController.upload.bind(postAttachmentController));
+router.get('/getImages/:postId', postAttachmentController.getImages.bind(postAttachmentController));
 
 export default router;

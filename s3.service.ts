@@ -1,5 +1,6 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand,GetObjectCommand  } from '@aws-sdk/client-s3'
 const uuid = require("uuid").v4;
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 const region: string = process.env.AWS_BUCKET_REGION || '';
 const accessKeyId: string = process.env.AWS_ACCESS_KEY || '';
@@ -45,4 +46,17 @@ export async function s3Uploadv3(files:any, userId:number,postId:number): Promis
   //   const result = await s3client.send(new PutObjectCommand(param));
   //   keys.push(param.Key);
   // }
+}
+export async function getObjectSignedUrl(key:string) {
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: key
+  }
+
+  // https://aws.amazon.com/blogs/developer/generate-presigned-url-modular-aws-sdk-javascript/
+  const command = new GetObjectCommand(params);
+  const seconds = 60
+  const url = await getSignedUrl(s3client, command, { expiresIn: seconds });
+
+  return url
 }

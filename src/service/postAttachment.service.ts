@@ -16,5 +16,8 @@ class PostAttachmentService{
       url,
       postId);
   }
+  async getByIPostId(postId: number): Promise<PostAttachment[]>{
+    return this.postAttachmentRepository.findByPostId(postId);
+  }
 }
 export default PostAttachmentService;
