@@ -1,4 +1,4 @@
-import { PrismaClient,PostAttachment,Prisma } from "@prisma/client";
+import { PrismaClient,PostAttachment } from "@prisma/client";
 const prisma = new PrismaClient();
 
 class PostAttachmentRepository{
@@ -10,10 +10,10 @@ class PostAttachmentRepository{
         post: {
           connect: {
             id: postId,
-          },
-        },
-      },
-    })
+          }
+        }
+      }
+    });
   }
 
   async findByPostId(postId: number):Promise<PostAttachment[]>{

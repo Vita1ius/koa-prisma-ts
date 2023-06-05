@@ -14,13 +14,6 @@ const s3client = new S3Client({
 })
 
 export async function s3Uploadv3(files:any, userId:number,postId:number): Promise<string[]> {
-  // const s3client = new S3Client({
-  //   region,
-  //   credentials: {
-  //     accessKeyId,
-  //     secretAccessKey
-  //   }
-  // })
 
   const params = files.map((file:any) => {
     return {
@@ -38,14 +31,6 @@ export async function s3Uploadv3(files:any, userId:number,postId:number): Promis
     })
   )
   return keys;
-
-
-  // const keys: string[] = [];
-
-  // for (const param of params) {
-  //   const result = await s3client.send(new PutObjectCommand(param));
-  //   keys.push(param.Key);
-  // }
 }
 export async function getObjectSignedUrl(key:string) {
   const params = {
@@ -55,7 +40,7 @@ export async function getObjectSignedUrl(key:string) {
 
   // https://aws.amazon.com/blogs/developer/generate-presigned-url-modular-aws-sdk-javascript/
   const command = new GetObjectCommand(params);
-  const seconds = 60
+  const seconds = 180
   const url = await getSignedUrl(s3client, command, { expiresIn: seconds });
 
   return url

@@ -1,5 +1,5 @@
 import { Context } from 'koa';
-import { User, Post,Prisma } from '@prisma/client';
+import { User, Post } from '@prisma/client';
 import UserService from '../service/user.service';
 
 import jwt from 'jsonwebtoken';

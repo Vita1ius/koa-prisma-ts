@@ -1,5 +1,5 @@
 import UserRepository from '../repository/user.repository';
-import { User, Post,Prisma } from '@prisma/client';
+import { User,Prisma } from '@prisma/client';
 import { createHash } from 'crypto';
 
 class UserService{

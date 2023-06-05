@@ -8,7 +8,7 @@ class PostAttachmentService{
   constructor(){
     this.postAttachmentRepository = new PostAttachmentRepository();
   }
-  async add(
+  async addImage(
     url: string,
     postId: number
   ): Promise<PostAttachment> {

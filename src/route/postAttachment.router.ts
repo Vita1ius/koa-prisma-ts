@@ -18,18 +18,13 @@ const fileFilter = (req:any, file:any, cb:any) => {
 };
 
 // ["image", "jpeg"]
-
 const upload = multer({
   storage,
   fileFilter,
   limits: { fileSize: 1000000000, files: 4 },
 });
 
-// const storage = multer.memoryStorage()
-// const upload = multer({ storage: storage })
-
-
 router.post('/upload',authenticated,upload.array("file"), postAttachmentController.upload.bind(postAttachmentController));
-router.get('/getImages/:postId', postAttachmentController.getImages.bind(postAttachmentController));
+router.get('/getImages/:postId',authenticated, postAttachmentController.getImages.bind(postAttachmentController));
 
 export default router;
