@@ -3,6 +3,12 @@ Cтворити файл .env і добавити DATABASE_URL="postgresql://pos
 
 зразок: DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
 
+Також добавити такі дані в .env
+AWS_BUCKET_NAME=''
+AWS_BUCKET_REGION=''
+AWS_ACCESS_KEY=''
+AWS_SECRET_ACCESS_KEY=''
+
 Команди для запуску:
 
 1. npm install
