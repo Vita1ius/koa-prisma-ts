@@ -23,6 +23,14 @@ class PostAttachmentRepository{
       }
     });
   }
+
+  async delete(id: number): Promise<PostAttachment | null>{
+    return prisma.postAttachment.delete({
+      where:{
+        id:id
+      }
+    });
+  }
 }
 
 export default PostAttachmentRepository;

@@ -16,8 +16,13 @@ class PostAttachmentService{
       url,
       postId);
   }
+
   async getByIPostId(postId: number): Promise<PostAttachment[]>{
     return this.postAttachmentRepository.findByPostId(postId);
+  }
+
+  async deteleById(id: number): Promise<PostAttachment | null>{
+    return this.postAttachmentRepository.delete(id);
   }
 }
 export default PostAttachmentService;

@@ -1,6 +1,6 @@
 import { Context } from 'koa';
 import PostAttachmentService from '../service/postAttachment.service';
-import { s3Uploadv3,getObjectSignedUrl } from '../s3/s3.service';
+import { s3Uploadv3,getObjectSignedUrl, deleteFile } from '../s3/s3.service';
 import jwt from 'jsonwebtoken';
 const secretKey = 'your-secret-key'; // Secret key for JWT
 
@@ -40,6 +40,20 @@ class PostAttachmentController{
       post.url = await getObjectSignedUrl(post.url)
     }
     ctx.body = posts;
+  }
+  async deleteImageById(ctx: Context): Promise<void>{
+    try{
+      const id = Number(ctx.params.id);
+      const image = await this.postAttachmentService.deteleById(id);
+      if(image){
+        await deleteFile(image.url)
+        ctx.body = {status: 'Image deleted successfully'}
+      }else ctx.body = {status: 'Image not found'}
+    }catch(err){
+      ctx.status = 404;
+      ctx.body = err
+    }
+
   }
 }
 export default PostAttachmentController;

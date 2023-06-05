@@ -26,5 +26,6 @@ const upload = multer({
 
 router.post('/upload',authenticated,upload.array("file"), postAttachmentController.upload.bind(postAttachmentController));
 router.get('/getImages/:postId',authenticated, postAttachmentController.getImages.bind(postAttachmentController));
+router.delete('/deleteImage/:id',authenticated, postAttachmentController.deleteImageById.bind(postAttachmentController));
 
 export default router;
