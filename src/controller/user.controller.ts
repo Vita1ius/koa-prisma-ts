@@ -1,7 +1,7 @@
 import { Context } from 'koa';
 import { User, Post } from '@prisma/client';
 import UserService from '../service/user.service';
-import Email from '../../utils/email';
+import Email from '../utils/email';
 import { createHash,randomBytes } from 'crypto';
 
 import jwt from 'jsonwebtoken';
