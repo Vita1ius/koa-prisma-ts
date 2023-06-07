@@ -9,6 +9,11 @@ AWS_BUCKET_REGION=''
 AWS_ACCESS_KEY=''
 AWS_SECRET_ACCESS_KEY=''
 
+
+EMAIL_HOST =''
+EMAIL_USER =''
+EMAIL_PASS =''
+
 Команди для запуску:
 
 1. npm install

@@ -1,6 +1,8 @@
 import { Context } from 'koa';
 import { User, Post } from '@prisma/client';
 import UserService from '../service/user.service';
+import Email from '../../utils/email';
+import { createHash,randomBytes } from 'crypto';
 
 import jwt from 'jsonwebtoken';
 const secretKey = 'your-secret-key'; // Secret key for JWT
@@ -115,5 +117,74 @@ class UserController {
     const users = await this.userService.getUserPostCount();
     ctx.body = users;
   }
+  async send(ctx:Context): Promise<void>{
+    const {email} = ctx.request.body as {
+      email: string;
+    };
+
+    const user = await this.userService.getUserByEmail(email.toLowerCase());
+    const message =
+      'You will receive a reset email if user with that email exist';
+    if (user) {
+      ctx.status = 200;
+      ctx.body ={status: 'success', message : message}
+      const resetToken = randomBytes(32).toString('hex');
+      const passwordResetToken = await this.userService.hash(resetToken);
+
+      await this.userService.updateUser(
+        user.id,
+        {
+          passwordResetToken,
+          passwordResetAt: new Date(Date.now() + 10 * 60 * 1000),
+        }
+      );
+      try {
+        const url = `http://localhost:3000/resetPassword/${resetToken}`;
+        await new Email(user, url).sendPasswordResetToken();
+  
+        ctx.status = 200;
+        ctx.body ={status: 'success', message : message}
+      } catch (err: any) {
+        await this.userService.updateUser(
+          user.id,
+          { passwordResetToken: null, passwordResetAt: null },
+        );
+        ctx.status = 500;
+        ctx.body ={status: 'success', message : 'There was an error sending email'}
+        };
+    }else{
+        ctx.status = 404;
+        ctx.body = {status:'This email isn\'t registered or is incorrect'}
+      }
+    }
+
+    async resetPasswordHandler(ctx:Context):Promise<void>{
+      const resetToken = ctx.params.resetToken;
+      const {password} = ctx.request.body as {
+        password: string;
+      };
+      try{
+        const passwordResetToken = await this.userService.hash(resetToken);
+        const user = await this.userService.findUserByResetToken(passwordResetToken);
+        if (!user) {
+          ctx.status = 403;
+          ctx.body = {status: 'fail',
+          message: 'Invalid token or token has expired'}
+        }
+        else {
+          const hashedPassword = await this.userService.hash(password);
+          await this.userService.updateUser(user.id,{
+          password: hashedPassword,
+          passwordResetToken: null,
+          passwordResetAt: null,
+        })
+        ctx.status = 200;
+        ctx.body = {status: 'success',
+        message: 'Password data updated successfully',}
+        }
+      }catch(err){
+        ctx.body = 'err';
+      }
+    }
 }
 export default UserController;

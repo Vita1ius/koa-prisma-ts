@@ -12,12 +12,29 @@ class UserRepository{
     }
   })
   }
+  async findByEmail(email: string): Promise<User | null>{
+    return prisma.user.findUnique({
+      where: {
+        email
+      }
+    })
+  }
+  async findUserByResetToken(passwordResetToken:string): Promise<User | null>{
+    return prisma.user.findFirst({
+      where: {
+        passwordResetToken,
+        passwordResetAt: {
+          gt: new Date()
+        }
+      }
+    })
+  }
   async create(
     username:string,
     name: string,
     lastName: string,
     password: string,
-    gmail: string
+    email: string
     ): Promise<User> {
     return prisma.user.create({
       data:{ 
@@ -25,7 +42,7 @@ class UserRepository{
         name,
         lastName,
         password,
-        gmail
+        email
       }
     });
   }
@@ -59,7 +76,7 @@ class UserRepository{
     name: string,
     lastName: string,
     password: string,
-    gmail: string,
+    email: string,
     posts: Prisma.PostCreateInput[]
   ): Promise<User>{
     return await prisma.user.create({
@@ -68,7 +85,7 @@ class UserRepository{
       name,
       lastName,
       password,
-      gmail,
+      email,
       posts: {
         create: posts,
       },

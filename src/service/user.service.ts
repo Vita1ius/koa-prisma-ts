@@ -89,5 +89,11 @@ class UserService{
   async getUserPostCount(){
     return this.userRepository.getUserPostCount();
   }
+  async getUserByEmail(email: string){
+    return this.userRepository.findByEmail(email);
+  }
+  async findUserByResetToken(passwordResetToken:string): Promise<User | null>{
+    return this.userRepository.findUserByResetToken(passwordResetToken);
+  }
 }
 export default UserService;

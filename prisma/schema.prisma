@@ -10,25 +10,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id        Int      @id @default(autoincrement())
-  username     String   @unique
-  name      String
-  lastName  String
-  password  String
-  gmail     String
-  posts Post[]
+  id                  Int       @id @default(autoincrement())
+  username            String    @unique
+  name                String
+  lastName            String
+  password            String
+  email               String    @unique
+  passwordResetToken  String?   @unique
+  passwordResetAt     DateTime?
+  posts               Post[]
 }
 model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  viewCount Int      @default(0)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
-  attachments    PostAttachment[]
+  id            Int             @id @default(autoincrement())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  title         String
+  content       String?
+  published     Boolean         @default(false)
+  viewCount     Int             @default(0)
+  author        User?           @relation(fields: [authorId], references: [id])
+  authorId      Int?
+  attachments   PostAttachment[]
 }
 model PostAttachment {
   id        Int      @id @default(autoincrement())
