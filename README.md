@@ -10,9 +10,8 @@ AWS_ACCESS_KEY=''
 AWS_SECRET_ACCESS_KEY=''
 
 
-EMAIL_HOST =''
 EMAIL_USER =''
-EMAIL_PASS =''
+SENDGRID_API_KEY=''
 
 Команди для запуску:
 

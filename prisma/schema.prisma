@@ -10,15 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id                  Int       @id @default(autoincrement())
-  username            String    @unique
-  name                String
-  lastName            String
-  password            String
-  email               String    @unique
-  passwordResetToken  String?   @unique
-  passwordResetAt     DateTime?
-  posts               Post[]
+  id                         Int           @id @default(autoincrement())
+  username                   String        @unique
+  name                       String
+  lastName                   String
+  password                   String
+  email                      String        @unique
+  passwordResetToken         String?       @unique
+  passwordResetExpiredAt     DateTime?
+  posts                      Post[]
 }
 model Post {
   id            Int             @id @default(autoincrement())

@@ -23,7 +23,7 @@ class UserRepository{
     return prisma.user.findFirst({
       where: {
         passwordResetToken,
-        passwordResetAt: {
+        passwordResetExpiredAt: {
           gt: new Date()
         }
       }

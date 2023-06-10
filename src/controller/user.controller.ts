@@ -135,7 +135,7 @@ class UserController {
         user.id,
         {
           passwordResetToken,
-          passwordResetAt: new Date(Date.now() + 10 * 60 * 1000),
+          passwordResetExpiredAt: new Date(Date.now() + 10 * 60 * 1000),
         }
       );
       try {
@@ -147,7 +147,7 @@ class UserController {
       } catch (err: any) {
         await this.userService.updateUser(
           user.id,
-          { passwordResetToken: null, passwordResetAt: null },
+          { passwordResetToken: null, passwordResetExpiredAt: null },
         );
         ctx.status = 500;
         ctx.body ={status: 'success', message : 'There was an error sending email'}
@@ -176,7 +176,7 @@ class UserController {
           await this.userService.updateUser(user.id,{
           password: hashedPassword,
           passwordResetToken: null,
-          passwordResetAt: null,
+          passwordResetExpiredAt: null,
         })
         ctx.status = 200;
         ctx.body = {status: 'success',
