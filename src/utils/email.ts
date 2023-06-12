@@ -1,6 +1,4 @@
 import { Prisma } from '@prisma/client';
-import pug from 'pug';
-const { convert } = require('html-to-text');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
