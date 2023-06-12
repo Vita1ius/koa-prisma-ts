@@ -117,7 +117,7 @@ class UserController {
     const users = await this.userService.getUserPostCount();
     ctx.body = users;
   }
-  async send(ctx:Context): Promise<void>{
+  async sendPasswordResetEmail(ctx:Context): Promise<void>{
     const {email} = ctx.request.body as {
       email: string;
     };

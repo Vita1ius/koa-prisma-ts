@@ -13,34 +13,18 @@ export default class Email {
     this.to = user.email;
   }
 
-  async send(template: string, subject: string) {
-    // Generate HTML template based on the template string
-    const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
-      firstName: this.firstName,
-      subject,
-      url: this.url,
-    });
-    // Create mailOptions
+  async sendPasswordResetToken() {
     const mailOptions = {
       from: this.#emailUser,
       to: this.to,
-      subject,
-      text: convert(html),
-      html,
+      templateId: "d-5a0670f8875746cebc715dd600646272",
+      dynamic_template_data: {
+        firstName: this.firstName,
+        reset_link: this.url,
+        subject : 'Your password reset token (valid for only 10 minutes)'
+      }
     };
 
-    // Send email
     await sgMail.send(mailOptions);
-  }
-
-  async sendVerificationCode() {
-    await this.send('verificationCode', 'Your account verification code');
-  }
-
-  async sendPasswordResetToken() {
-    await this.send(
-      'resetPassword',
-      'Your password reset token (valid for only 10 minutes)'
-    );
   }
 }
