@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 const sgMail = require('@sendgrid/mail');
+require('dotenv').config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export default class Email {
