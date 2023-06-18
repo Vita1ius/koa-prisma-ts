@@ -1,36 +1,43 @@
 import { Context } from 'koa';
 import PostAttachmentService from '../service/postAttachment.service';
+import PostService from '../service/post.service';
 import { s3Uploadv3,getObjectSignedUrl, deleteFile } from '../s3/s3.service';
-import jwt from 'jsonwebtoken';
-const secretKey = 'your-secret-key'; // Secret key for JWT
 
 
 class PostAttachmentController{
   private postAttachmentService: PostAttachmentService;
+  private postService: PostService;
   constructor(){
     this.postAttachmentService = new PostAttachmentService();
+    this.postService = new PostService();
   }
   async upload(ctx:any): Promise<void>{
-    //const { userId, postId } = ctx.request.body as { userId: number, postId: number };
     const formData = ctx.request.body;
     const postId = Number(formData.postId);
-    const token = ctx.request.headers.authorization!.split(' ')[1];
-
-    try {
-      const decodedToken = jwt.verify(token, secretKey) as { user: { id: number } };
-      const userId = decodedToken.user.id;
-      if(ctx.request.files && ctx.request.files.length > 0){
-        const results = await s3Uploadv3(ctx.request.files,userId,postId);
-        results.map(url => this.postAttachmentService.addImage(url,postId))
-
-        ctx.status = 201;
-        ctx.body = { status: 'uploaded' };
+    try{
+      const post = await this.postService.getByid(postId);
+      if(post){
+        try {
+          const userId = ctx.state.user.id;
+          if(ctx.request.files && ctx.request.files.length > 0){
+            const results = await s3Uploadv3(ctx.request.files,userId,postId);
+            results.map(url => this.postAttachmentService.addImage(url,postId))
+    
+            ctx.status = 201;
+            ctx.body = { status: 'uploaded' };
+          }else{
+            ctx.body = { status: 'file is empty' };
+          }
+        } catch (err) {
+          ctx.status = 404
+          ctx.body = err
+        }
       }else{
-        ctx.body = { status: 'file is empty' };
-      }
-    } catch (err) {
-      ctx.status = 404
-      ctx.body = err
+        ctx.status = 404;
+        ctx.body = {error: 'Post not found'}
+    }
+    }catch(err){
+      ctx.body = {error: 'Invalid request parameter'}
     }
   }
   async getImages(ctx:Context):Promise<void>{

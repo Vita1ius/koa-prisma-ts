@@ -1,9 +1,20 @@
 import { Context } from 'koa';
 import { Post } from '@prisma/client';
 import PostService from '../service/post.service';
+const dotenv = require('dotenv');
+const { SQSClient, SendMessageCommand} = require('@aws-sdk/client-sqs')
+dotenv.config();
 
-import jwt from 'jsonwebtoken';
-const secretKey = 'your-secret-key'; // Secret key for JWT
+const conifgObject = {
+  region: process.env.AWS_BUCKET_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  }
+}
+const sqsClient = new SQSClient(conifgObject);
+const queueUrl = process.env.QUEUE_URL || '';
+
 
 class PostController{
   private postService: PostService;
@@ -94,19 +105,36 @@ class PostController{
       ctx.body = { error: 'Post not found' }
     }
   }
-  async createPost(ctx: Context) {
-    const { title, content } = ctx.request.body as { title: string, content: string };
-    const token = ctx.request.headers.authorization!.split(' ')[1];
+  async createPost(data: Object) {
     try {
-      const decodedToken = jwt.verify(token, secretKey) as { user: { id: number } };
-      const authorId = decodedToken.user.id;
-  
+      const { title, content,authorId } = data as { title: string, content: string, authorId : number };
       const createdPost = await this.postService.createPost(title, content, authorId);
-      ctx.status = 201;
-      ctx.body = createdPost;
+      console.log(createdPost);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  async sendPostToSQS(ctx: Context) {
+    const { title, content } = ctx.request.body as { title: string, content: string };
+    try {
+      const authorId = ctx.state.user.id;
+      const data = {
+        title : title,
+        content : content,
+        authorId : authorId
+      }
+      const command = new SendMessageCommand({
+        MessageBody : JSON.stringify(data),
+        QueueUrl: queueUrl,
+      })
+      const result = await sqsClient.send(command);
+      console.log(result);
+      ctx.body = { status: result.$metadata.httpStatusCode };
     } catch (error) {
       ctx.status = 500;
-      ctx.body = { error: 'Invalid token' };
+      ctx.body = { error: error };
     }
   }
 }
