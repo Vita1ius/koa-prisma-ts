@@ -12,6 +12,8 @@ router.get('/postByAuthorId/:authorId',authenticated, postController.getByAuthor
 router.delete('/post/:id',authenticated, postController.deletePost.bind(postController))
 router.put('/post/:id',authenticated, postController.updatePost.bind(postController));
 router.put('/post/:id/views',authenticated, postController.view.bind(postController));
-router.post('/createPost',authenticated , postController.sendPostToSQS.bind(postController));
+router.post('/createPost',authenticated , postController.createPost.bind(postController));
+router.post('/createPostBySQS',authenticated , postController.sendPostToSQS.bind(postController));
+
 
 export default router;

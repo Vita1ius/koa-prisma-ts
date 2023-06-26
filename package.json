@@ -40,6 +40,7 @@
     "start": "node build/app.js",
     "startConsumer": "node build/sqs-consumer/consumerApp.js",
     "postinstall": "npx prisma generate",
-    "local": "npx ts-node \"../koa-prisma-ts/src/app.ts\""
+    "local": "npx ts-node \"../koa-prisma-ts/src/app.ts\"",
+    "localConsumer": "npx ts-node \"../koa-prisma-ts/src/sqs-consumer/consumerApp.ts"
   }
 }

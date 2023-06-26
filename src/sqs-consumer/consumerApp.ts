@@ -17,8 +17,8 @@ const queueUrl = process.env.QUEUE_URL || '';
 const appConsumer = Consumer.create({
   queueUrl: queueUrl,
   handleMessage: async (message) => {
-    const json = JSON.parse(message.Body || '')
-    await postController.createPost(json)
+    const data = JSON.parse(message.Body || '')
+    await postController.createPostBySQS(data)
   },
   sqs: new SQSClient(conifgObject)
 });

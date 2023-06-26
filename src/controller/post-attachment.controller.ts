@@ -1,21 +1,21 @@
 import { Context } from 'koa';
-import PostService from '../service/post.service';
+import PostRepository from "../repository/post.repository";
 import PostAttachmentRepository from "../repository/postAttachment.repository";
 import { s3Uploadv3,getObjectSignedUrl, deleteFile } from '../s3/s3.service';
 
 
 class PostAttachmentController{
   private postAttachmentRepository: PostAttachmentRepository;
-  private postService: PostService;
+  private postRepository: PostRepository;
   constructor(){
     this.postAttachmentRepository = new PostAttachmentRepository();
-    this.postService = new PostService();
+    this.postRepository = new PostRepository();
   }
   async upload(ctx:any): Promise<void>{
     const formData = ctx.request.body;
     const postId = Number(formData.postId);
     try{
-      const post = await this.postService.getByid(postId);
+      const post = await this.postRepository.findPostById(postId);
       if(post){
         try {
           const userId = ctx.state.user.id;
