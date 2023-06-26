@@ -1,8 +1,9 @@
 import { Context } from 'koa';
 import { User, Post, Prisma } from '@prisma/client';
-import Email from '../utils/email';
+import Email from '../service/mailer';
 import UserRepository from '../repository/user.repository';
-import { createHash,randomBytes } from 'crypto';
+import { randomBytes } from 'crypto';
+import {hash} from '../service/password-hasher'
 
 import jwt from 'jsonwebtoken';
 const secretKey = 'your-secret-key'; // Secret key for JWT
@@ -32,10 +33,6 @@ class UserController {
       ctx.body = {error: 'Invalid request parameter'}
     }
   }
-  async hash(password:string) : Promise<string>{
-    const passwordHash = createHash('sha256').update(password).digest('hex');
-    return passwordHash;
-  }
   async  createUser(ctx: Context): Promise<void> {
     const { username, name, lastName, password, gmail } = ctx.request.body as {
       username: string;
@@ -46,7 +43,7 @@ class UserController {
     };
   
     try {
-      const hashedPassword: string = await this.hash(password);
+      const hashedPassword: string = await hash(password);
       const user:User = await this.userRepository.create(
         username,
         name,
@@ -98,7 +95,7 @@ class UserController {
     };
     const user = await this.userRepository.login(username);
     if(user){
-      const hashedPassword = await this.hash(password);
+      const hashedPassword = await hash(password);
       if(hashedPassword === user.password){
         const token = jwt.sign({ user }, secretKey, { expiresIn: '1h' });
       ctx.body = { token };
@@ -127,7 +124,7 @@ class UserController {
         return { title: post.title, content: post.content || undefined }
       })
       : []
-      const hashedPassword: string = await this.hash(password);
+      const hashedPassword: string = await hash(password);
       const user:User = await this.userRepository.signup(
         username,
         name,
@@ -159,7 +156,7 @@ class UserController {
       ctx.status = 200;
       ctx.body ={status: 'success', message : message}
       const resetToken = randomBytes(32).toString('hex');
-      const passwordResetToken = await this.hash(resetToken);
+      const passwordResetToken = await hash(resetToken);
 
       await this.userRepository.update(
         user.id,
@@ -194,7 +191,7 @@ class UserController {
         password: string;
       };
       try{
-        const passwordResetToken = await this.hash(resetToken);
+        const passwordResetToken = await hash(resetToken);
         const user = await this.userRepository.findUserByResetToken(passwordResetToken);
         if (!user) {
           ctx.status = 403;
@@ -202,7 +199,7 @@ class UserController {
           message: 'Invalid token or token has expired'}
         }
         else {
-          const hashedPassword = await this.hash(password);
+          const hashedPassword = await hash(password);
           await this.userRepository.update(user.id,{
           password: hashedPassword,
           passwordResetToken: null,

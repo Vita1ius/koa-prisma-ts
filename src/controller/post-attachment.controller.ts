@@ -1,7 +1,7 @@
 import { Context } from 'koa';
 import PostRepository from "../repository/post.repository";
 import PostAttachmentRepository from "../repository/postAttachment.repository";
-import { s3Uploadv3,getObjectSignedUrl, deleteFile } from '../s3/s3.service';
+import { s3Uploadv3,getObjectSignedUrl, deleteFile } from '../service/aws-s3';
 
 
 class PostAttachmentController{
