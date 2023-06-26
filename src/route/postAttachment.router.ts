@@ -1,5 +1,5 @@
 import Router from 'koa-router'
-import PostAttachmentController from '../controller/postAttachment.controller';
+import PostAttachmentController from '../controller/post-attachment.controller';
 import { authenticated } from '../middleware/auth.middleware';
 const multer = require('@koa/multer');
 

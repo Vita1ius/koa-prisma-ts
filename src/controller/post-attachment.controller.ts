@@ -1,14 +1,14 @@
 import { Context } from 'koa';
-import PostAttachmentService from '../service/postAttachment.service';
 import PostService from '../service/post.service';
+import PostAttachmentRepository from "../repository/postAttachment.repository";
 import { s3Uploadv3,getObjectSignedUrl, deleteFile } from '../s3/s3.service';
 
 
 class PostAttachmentController{
-  private postAttachmentService: PostAttachmentService;
+  private postAttachmentRepository: PostAttachmentRepository;
   private postService: PostService;
   constructor(){
-    this.postAttachmentService = new PostAttachmentService();
+    this.postAttachmentRepository = new PostAttachmentRepository();
     this.postService = new PostService();
   }
   async upload(ctx:any): Promise<void>{
@@ -21,7 +21,7 @@ class PostAttachmentController{
           const userId = ctx.state.user.id;
           if(ctx.request.files && ctx.request.files.length > 0){
             const results = await s3Uploadv3(ctx.request.files,userId,postId);
-            results.map(url => this.postAttachmentService.addImage(url,postId))
+            results.map(url => this.postAttachmentRepository.addImage(url,postId))
     
             ctx.status = 201;
             ctx.body = { status: 'uploaded' };
@@ -42,7 +42,7 @@ class PostAttachmentController{
   }
   async getImages(ctx:Context):Promise<void>{
     const postId = Number(ctx.params.postId);
-    const posts = await this.postAttachmentService.getByIPostId(postId)
+    const posts = await this.postAttachmentRepository.findByPostId(postId);
     for (let post of posts) {
       post.url = await getObjectSignedUrl(post.url)
     }
@@ -51,7 +51,7 @@ class PostAttachmentController{
   async deleteImageById(ctx: Context): Promise<void>{
     try{
       const id = Number(ctx.params.id);
-      const image = await this.postAttachmentService.deteleById(id);
+      const image = await this.postAttachmentRepository.delete(id);
       if(image){
         await deleteFile(image.url)
         ctx.body = {status: 'Image deleted successfully'}
