@@ -1,27 +1,27 @@
 import { Context } from 'koa';
-import { User, Post } from '@prisma/client';
-import UserService from '../service/user.service';
+import { User, Post, Prisma } from '@prisma/client';
 import Email from '../utils/email';
+import UserRepository from '../repository/user.repository';
 import { createHash,randomBytes } from 'crypto';
 
 import jwt from 'jsonwebtoken';
 const secretKey = 'your-secret-key'; // Secret key for JWT
 
 class UserController {
-  private userService : UserService;
+  private userRepository: UserRepository;
 
   constructor(){
-    this.userService  = new UserService();
+    this.userRepository = new UserRepository();
   }
 
   async getAllUsers(ctx: Context): Promise<void> {
-    const users = await this.userService.getAllUsers();
+    const users = await this.userRepository.findAll();
     ctx.body = users;
   }
   async getUserById(ctx: Context): Promise<void>{
     const id = Number(ctx.params.id);
     try{
-      const user = await this.userService.getUserById(id);
+      const user = await this.userRepository.findById(id);
       if(user){
         ctx.body = user;
       }else{
@@ -31,6 +31,10 @@ class UserController {
     }catch(err){
       ctx.body = {error: 'Invalid request parameter'}
     }
+  }
+  async hash(password:string) : Promise<string>{
+    const passwordHash = createHash('sha256').update(password).digest('hex');
+    return passwordHash;
   }
   async  createUser(ctx: Context): Promise<void> {
     const { username, name, lastName, password, gmail } = ctx.request.body as {
@@ -42,7 +46,14 @@ class UserController {
     };
   
     try {
-      const user:User = await this.userService.createUser(username, name, lastName, password, gmail);
+      const hashedPassword: string = await this.hash(password);
+      const user:User = await this.userRepository.create(
+        username,
+        name,
+        lastName,
+        hashedPassword,
+        gmail);
+
       ctx.status = 201;
       ctx.body = user;
     } catch (error) {
@@ -54,7 +65,7 @@ class UserController {
   async deleteUser(ctx: Context):Promise<void>{
     const id: number = Number(ctx.params.id);
     try{
-      const deleteUser = await this.userService.deleteUser(id)
+      const deleteUser = await this.userRepository.delete(id);
       if(deleteUser){
         ctx.body = deleteUser;
       }
@@ -67,7 +78,7 @@ class UserController {
     try{
       const id = Number(ctx.params.id);
       const data = ctx.request.body as Partial<User>;
-      const updatedUser = await this.userService.updateUser(id, data);
+      const updatedUser = await this.userRepository.update(id, data);
       if (updatedUser) {
         ctx.body = updatedUser;
       } else {
@@ -85,13 +96,19 @@ class UserController {
       username: string;
       password: string;
     };
-    const user = await this.userService.login(username,password);
+    const user = await this.userRepository.login(username);
     if(user){
-      const token = jwt.sign({ user }, secretKey, { expiresIn: '1h' });
+      const hashedPassword = await this.hash(password);
+      if(hashedPassword === user.password){
+        const token = jwt.sign({ user }, secretKey, { expiresIn: '1h' });
       ctx.body = { token };
+      }else{
+        ctx.status = 404;
+        ctx.body = {error: 'Wrong password'}
+      }
     }else{
       ctx.status = 404;
-      ctx.body = {error: 'Wrong login or password'}
+      ctx.body = {error: 'Wrong username'}
     }
   }
   async  signup(ctx: Context): Promise<void> {
@@ -105,7 +122,20 @@ class UserController {
     };
   
     try {
-      const user:User = await this.userService.signup(username, name, lastName, password, gmail,posts);
+      const postData = posts
+      ? posts.map((post: Prisma.PostCreateInput) => {
+        return { title: post.title, content: post.content || undefined }
+      })
+      : []
+      const hashedPassword: string = await this.hash(password);
+      const user:User = await this.userRepository.signup(
+        username,
+        name,
+        lastName,
+        hashedPassword,
+        gmail,
+        postData);
+
       ctx.status = 201;
       ctx.body = user;
     } catch (error) {
@@ -114,7 +144,7 @@ class UserController {
     }
   }
   async getUserPostCount(ctx: Context): Promise<void>{
-    const users = await this.userService.getUserPostCount();
+    const users = await this.userRepository.getUserPostCount();
     ctx.body = users;
   }
   async sendPasswordResetEmail(ctx:Context): Promise<void>{
@@ -122,16 +152,16 @@ class UserController {
       email: string;
     };
 
-    const user = await this.userService.getUserByEmail(email.toLowerCase());
+    const user = await this.userRepository.findByEmail(email.toLowerCase());
     const message =
       'You will receive a reset email if user with that email exist';
     if (user) {
       ctx.status = 200;
       ctx.body ={status: 'success', message : message}
       const resetToken = randomBytes(32).toString('hex');
-      const passwordResetToken = await this.userService.hash(resetToken);
+      const passwordResetToken = await this.hash(resetToken);
 
-      await this.userService.updateUser(
+      await this.userRepository.update(
         user.id,
         {
           passwordResetToken,
@@ -145,7 +175,7 @@ class UserController {
         ctx.status = 200;
         ctx.body ={status: 'success', message : message}
       } catch (err: any) {
-        await this.userService.updateUser(
+        await this.userRepository.update(
           user.id,
           { passwordResetToken: null, passwordResetExpiredAt: null },
         );
@@ -164,16 +194,16 @@ class UserController {
         password: string;
       };
       try{
-        const passwordResetToken = await this.userService.hash(resetToken);
-        const user = await this.userService.findUserByResetToken(passwordResetToken);
+        const passwordResetToken = await this.hash(resetToken);
+        const user = await this.userRepository.findUserByResetToken(passwordResetToken);
         if (!user) {
           ctx.status = 403;
           ctx.body = {status: 'fail',
           message: 'Invalid token or token has expired'}
         }
         else {
-          const hashedPassword = await this.userService.hash(password);
-          await this.userService.updateUser(user.id,{
+          const hashedPassword = await this.hash(password);
+          await this.userRepository.update(user.id,{
           password: hashedPassword,
           passwordResetToken: null,
           passwordResetExpiredAt: null,
