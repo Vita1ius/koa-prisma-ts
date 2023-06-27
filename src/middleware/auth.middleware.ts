@@ -1,19 +1,6 @@
 import { Context } from 'koa';
-import jwt, { VerifyErrors } from 'jsonwebtoken';
-
-const secretKey = process.env.JWT_SECRET || 'your-secret-key';
-
-function authenticateToken(token: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, secretKey, (err: VerifyErrors | null, decoded: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(decoded);
-      }
-    });
-  });
-}
+import  { VerifyErrors } from 'jsonwebtoken';
+import { authenticateToken } from '../service/jwt'
 
 export async function authenticated(ctx: Context, next: () => Promise<any>) {
   try {
@@ -30,13 +17,13 @@ export async function authenticated(ctx: Context, next: () => Promise<any>) {
   } catch (err) {
     if ((err as VerifyErrors).name === 'JsonWebTokenError') {
       // ctx.throw(401, 'Invalid token');
-      ctx.body = {error: '401, \'Invalid token\''}
+      ctx.body = {error: '401, \'Invalid token\''};
     } else if ((err as VerifyErrors).name === 'TokenExpiredError') {
       // ctx.throw(401, 'Token expired');
-      ctx.body = {error: '401, \'Token expired\''}
+      ctx.body = {error: '401, \'Token expired\''};
     } else {
       // ctx.throw(500, 'Internal server error');
-      ctx.body = {error: '500, \'Internal server error\''}
+      ctx.body = {error: '500, \'Internal server error\''};
     }
   }
 }
