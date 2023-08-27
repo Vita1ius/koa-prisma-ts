@@ -1,6 +1,7 @@
 import { Context } from 'koa';
 import { Post } from '@prisma/client';
 import PostRepository from "../repository/post.repository";
+import logger from '../service/logger';
 const dotenv = require('dotenv');
 const { SQSClient, SendMessageCommand} = require('@aws-sdk/client-sqs')
 dotenv.config();
@@ -23,6 +24,7 @@ class PostController{
   }
   async getAll(ctx: Context): Promise<void> {
     const posts = await this.postRepository.findAll();
+    logger.info(`Get all posts`);
     ctx.body = posts;
   }
   async getByAuthorId(ctx: Context): Promise<void>{
@@ -30,12 +32,14 @@ class PostController{
     try{
       const posts = await this.postRepository.findByIdUser(authorId);
       if(posts){
+        logger.info(`Get posts by author ID: ${authorId}`);
         ctx.body = posts;
       }else{
         ctx.status = 404;
         ctx.body = {error: 'Posts not found'}
     }
     }catch(err){
+      logger.error(`Error getting posts by author ID: ${err}`);
       ctx.body = {error: 'Invalid request parameter'}
     }
   }
@@ -44,12 +48,14 @@ class PostController{
     try{
       const post = await this.postRepository.findPostById(id);
       if(post){
+        logger.info(`Get post by ID: ${id}`);
         ctx.body = post;
       }else{
         ctx.status = 404;
         ctx.body = {error: 'Post not found'}
     }
     }catch(err){
+      logger.error(`Error getting post by ID: ${err}`);
       ctx.body = {error: 'Invalid request parameter'}
     }
   }
@@ -58,12 +64,14 @@ class PostController{
     try{
       const post = await this.postRepository.findPostsByTitle(title);
       if(post){
+        logger.info(`Get post by title: ${title}`);
         ctx.body = post;
       }else{
         ctx.status = 404;
         ctx.body = {error: 'Post not found'}
     }
     }catch(err){
+      logger.error(`Error getting post by title: ${err}`);
       ctx.body = {error: 'Invalid request parameter'}
     }
   }
@@ -72,9 +80,11 @@ class PostController{
     try{
       const deletePost = await this.postRepository.delete(id);
       if(deletePost){
+        logger.info(`Delete post with ID: ${id}`);
         ctx.body = deletePost;
       }
     }catch(err){
+      logger.error(`Error deleting post: ${err}`);
       ctx.body = {error: 'Post not found'};
     }
   }
@@ -84,12 +94,14 @@ class PostController{
       const data = ctx.request.body as Partial<Post>;
       const updatedPost = await this.postRepository.update(id,data);
       if (updatedPost) {
+        logger.info(`Update post with ID: ${id}`);
         ctx.body = updatedPost;
       } else {
         ctx.status = 404;
         ctx.body = { error: 'Post not found' };
       }
     }catch(err){
+      logger.error(`Error updating post: ${err}`);
       ctx.body = {error: 'Invalid request parameters'}
     }
   }
@@ -150,8 +162,10 @@ class PostController{
       })
       const result = await sqsClient.send(command);
       console.log(result);
+      logger.info(`Send post to SQS: ${JSON.stringify(data)}`);
       ctx.body = { status: result.$metadata.httpStatusCode };
     } catch (error) {
+      logger.error(`Error sending post to SQS: ${error}`);
       ctx.status = 500;
       ctx.body = { error: error };
     }

@@ -3,6 +3,7 @@ import bodyParser from 'koa-bodyparser';
 import userRouter from './route/user.router';
 import postRouter from './route/post.router';
 import postAttachment from './route/postAttachment.router';
+import logger from './service/logger';
 
 const app = new Koa();
 // Middleware
@@ -21,3 +22,4 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+logger.info("APP started/restarted");
