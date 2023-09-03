@@ -126,7 +126,8 @@ class PostController{
         content,
         authorId);
 
-      ctx.body = `Post '${createdPost.title} created successfully'`
+      //ctx.body = `Post '${createdPost.title} created successfully'`
+      ctx.body = createdPost
     } catch (error) {
       ctx.status = 500;
       ctx.body = { error: 'Internal server error' };

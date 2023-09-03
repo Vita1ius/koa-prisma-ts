@@ -18,8 +18,6 @@ app.use((ctx: Context) => {
   ctx.status = ctx.status || 500;
   ctx.body = ctx.body || { error: 'Internal server error' };
 });
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-logger.info("APP started/restarted");
+
+
+export default app;
